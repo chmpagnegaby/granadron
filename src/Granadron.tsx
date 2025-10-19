@@ -1,6 +1,24 @@
 import { useEffect, useState } from "react";
+// Tipos necesarios para evitar 'any' implícitos
+import type { ReactNode, MouseEventHandler } from "react";
+
+type MediaItem = { src: string; title?: string; description?: string; label?: string };
+
+type NavLinkProps = {
+  href: string;
+  children: ReactNode;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+};
+
+type MediaCarouselProps = {
+  items: MediaItem[];
+  intervalMs?: number;
+  heightClass?: string;
+  withOverlay?: boolean;
+};
+
 import { motion } from "framer-motion";
-import { Menu, X, Phone, Mail, Send, ArrowRight, Instagram, Video as VideoIcon} from "lucide-react";
+import { Menu, X, Phone, Mail, Send, ArrowRight, Instagram, Video as VideoIcon } from "lucide-react";
 import firma from './assets/Logotipos/82f59599-8e4d-4493-b415-d6848d720c33.png';
 import hero from './assets/Fotos/Zafra/aea7ba88-e412-4cec-a41f-87afb8b65ac6.jpg';
 
@@ -94,7 +112,7 @@ const CONTACT = {
  * Componentes base *
  ***********************/
 // Link con subrayado animado
-const NavLink = ({ href, children, onClick }) => (
+const NavLink: React.FC<NavLinkProps> = ({ href, children, onClick }) => (
   <a href={href} onClick={onClick} className="group relative text-[15px] font-semibold text-neutral-100/90 hover:text-white">
     <span>{children}</span>
     <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-white transition-all duration-300 group-hover:w-full" />
@@ -114,7 +132,7 @@ const guessMime = (src = "") => {
   return "";
 };
 
-const MediaCarousel = ({ items, intervalMs = 5000, heightClass = "h-[60vh]", withOverlay = true }) => {
+const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000, heightClass = "h-[60vh]", withOverlay = true }) => {
   const [index, setIndex] = useState(0);
   const length = items.length;
 
