@@ -72,8 +72,8 @@ const PROJECTS: ProjectItem[] = [
         videoSrc: "https://drive.google.com/uc?export=download&id=1md834qIeKseg4g70yYL8SjiZdC37AMYU",
     },
     {
-        title: "Fuera de Monesterio",
-        slug: "fuera-de-monesterio",
+        title: "Feria de Monesterio",
+        slug: "feria-de-monesterio",
         description:
             "Selección de proyectos itinerantes: localizaciones singulares y culturas distintas, siempre con narrativa visual coherente.",
         videoSrc: "https://drive.google.com/uc?export=download&id=1aRoOxoEY_oSP0BHLB1TVpkj7HBJLPprC",
