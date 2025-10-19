@@ -108,8 +108,8 @@ const EXPERIENCE_SLIDES: MediaItem[] = [
 ];
 
 const RRSS = [
-  { label: "Instagram", href: "https://instagram.com/tuusuario", handle: "@granadron", icon: <Instagram className="h-6 w-6" aria-hidden /> },
-  { label: "TikTok", href: "https://tiktok.com/@tuusuario", handle: "@granadron", icon: <VideoIcon className="h-6 w-6" aria-hidden /> },
+  { label: "Instagram", href: "https://instagram.com/granadron", handle: "@granadron", icon: <Instagram className="h-6 w-6" aria-hidden /> },
+  { label: "TikTok", href: "https://tiktok.com/_granadron_", handle: "_granadron_", icon: <VideoIcon className="h-6 w-6" aria-hidden /> },
 ];
 
 const CONTACT = {
