@@ -28,13 +28,13 @@ import fiestapueblo from './assets/videos/preferia.MP4';
 import cultura from './assets/videos/zafraferia.MP4';
 import fiestaprivada from './assets/videos/victoriano.MP4';
 
-import fotopatrimonio from './assets/Fotos/Monasterio de Tentudia/0A229357-9D00-43A6-A2E2-7079B0B6A25B.JPEG';
-import fototoreo from './assets/Fotos/Concurso doma vaquera Monesterio/IMG_0716.JPG';
+import fotopatrimonio from './assets/Fotos/monasterio/monasterio.JPEG';
+import fototoreo from './assets/Fotos/domavaquera/doma.JPG';
 import fotoferia from './assets/Fotos/Zafra/BDE09759-D93E-4547-A6C3-F4806D1CFD27.JPEG';
-import fotofiestas from './assets/Fotos/Procesio╠ün Virgen de Tentudia de Monesterio/472A9A10-2814-49D4-A6EC-BCC326989582.JPEG';
-import fotoevento from './assets/Fotos/Fu╠ütbol/8527b78b-8585-47d7-85ff-78667cf64db6.JPG';
+import fotofiestas from './assets/Fotos/procesion/procesion.JPEG';
+import fotoevento from './assets/Fotos/futbol/futbol.JPG';
 
-import dron1 from './assets/DRON/Imagen de WhatsApp 2025-10-17 a las 18.58.13_71c35fb9.jpg';
+import dron1 from './assets/DRON/dron3.jpg';
 import dron2 from './assets/DRON/dron2.jpg';
 import dron3 from './assets/DRON/IMG_9805.JPG';
 
@@ -62,7 +62,7 @@ const FontInjector = () => (
 /***********************
  * Datos estáticos *
  ***********************/
-const NAV_ITEMS = [
+const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "¿Qué hacemos?", href: "#que-hacemos" },
   { label: "Sobre nosotros", href: "#sobre-nosotros" },
   { label: "Nuestro contacto", href: "#contacto" },
@@ -72,7 +72,7 @@ const NAV_ITEMS = [
 
 ];
 
-const PROJECT_VIDEOS = [
+const PROJECT_VIDEOS: MediaItem[] = [
   { src: ferialocal, title: "Aftermovie — Feria local", description: "Resumen dinámico con planos aéreos y transiciones suaves." },
   { src: toreo, title: "Toreo — Tentadero", description: "Cobertura elegante con travellings y foco en la emoción." },
   { src: fiestapueblo, title: "Fiestas de pueblo", description: "Planos cenitales y tomas cercanas para sentir la fiesta." },
@@ -88,7 +88,7 @@ const EXPERIENCE_TAGS = [
   "Eventos privados",
 ];
 
-const EXPERIENCE_SLIDES = [
+const EXPERIENCE_SLIDES: MediaItem[] = [
   { src: fotoferia, label: "Ferias y eventos" },
   { src: fototoreo, label: "Toreo" },
   { src: fotofiestas, label: "Fiestas" },
@@ -146,7 +146,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000,
 
   return (
     <div className={`relative w-full overflow-hidden rounded-2xl shadow-2xl ${heightClass}`}>
-      {items.map((item, i) => (
+      {items.map((item: MediaItem, i: number) => (
         <motion.div
           key={i}
           initial={{ opacity: 0 }}
@@ -218,7 +218,7 @@ export default function Granadron() {
 
           {/* Menú completo solo desde >= xl */}
           <div className="hidden items-center gap-8 xl:flex">
-            {NAV_ITEMS.map((item) => (
+            {NAV_ITEMS.map((item: { label: string; href: string }) => (
               <div key={item.label} className="group">
                 <NavLink href={item.href}>{item.label}</NavLink>
               </div>
