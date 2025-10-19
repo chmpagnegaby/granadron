@@ -43,23 +43,12 @@ import dron3 from './assets/DRON/IMG_9805.JPG';
 import logo from './assets/Logotipos/f3129c07-52f2-4c3d-bcde-269f178c0f06.png';
 
 // --- Google Drive helpers ---
-const isDriveUrl = (url = "") => /https?:\/\/drive\.google\.com\/.+/i.test(url);
 
 // Extrae el ID desde formatos:
 // - https://drive.google.com/file/d/ID/preview
 // - https://drive.google.com/uc?export=download&id=ID
-const extractDriveId = (url = "") => {
-  const byPath = url.match(/\/d\/([-\w]{25,})/);
-  if (byPath?.[1]) return byPath[1];
-  const byQuery = url.match(/[?&]id=([-\w]{25,})/);
-  return byQuery?.[1] || "";
-};
 
-// Transforma cualquier URL de Drive a /preview
-const toDrivePreview = (url = "") => {
-  const id = extractDriveId(url);
-  return id ? `https://drive.google.com/file/d/${id}/preview` : url;
-};
+
 
 // =============================================
 // Granadron — Landing Page (single-file React)
@@ -142,18 +131,6 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, onClick }) => (
 );
 
 
-// SOLO extensiones reales; Drive NO entra aquí
-const isVideo = (src = "") => /\.(mp4|webm|ogg|mov)(\?.*)?(#.*)?$/i.test(src);
-
-const guessMime = (src = "") => {
-  const clean = src.split("?")[0].split("#")[0];
-  const ext = (clean.split(".").pop() || "").toLowerCase();
-  if (ext === "mp4") return "video/mp4";
-  if (ext === "webm") return "video/webm";
-  if (ext === "ogg") return "video/ogg";
-  if (ext === "mov") return "video/quicktime";
-  return "video/mp4";
-};
 
 
 
