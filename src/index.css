@@ -1,0 +1,12 @@
+/* src/index.css */
+
+@import "tailwindcss";
+
+/* opcional: tus utilidades globales */
+
+html,
+body {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}

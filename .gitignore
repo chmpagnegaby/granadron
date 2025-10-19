@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.vercel/
+.env
+granadron/
+src/assets/Vi*/
+src/assets/Videos/
+src/assets/Fotos/
+src/assets/Videos/
+src/assets/Vi*/
