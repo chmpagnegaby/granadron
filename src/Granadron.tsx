@@ -22,11 +22,13 @@ import { Menu, X, Phone, Mail, Send, ArrowRight, Instagram, Video as VideoIcon }
 import firma from './assets/Logotipos/82f59599-8e4d-4493-b415-d6848d720c33.png';
 import hero from './assets/Fotos/Zafra/aea7ba88-e412-4cec-a41f-87afb8b65ac6.jpg';
 
-import ferialocal from './assets/videos/zafra.MP4';
-import toreo from './assets/videos/recortes.MP4';
-import fiestapueblo from './assets/videos/preferia.MP4';
-import cultura from './assets/videos/zafraferia.MP4';
-import fiestaprivada from './assets/videos/victoriano.MP4';
+// ✅ Vídeos servidos desde Google Drive (asegúrate de que están “Cualquiera con el vínculo”)
+const cultura = "https://drive.google.com/uc?export=download&id=1CP65LiwSsc9AVnNJnr_EQRsSCl98me8t";
+const fiestapueblo = "https://drive.google.com/uc?export=download&id=1aRoOxoEY_oSP0BHLB1TVpkj7HBJLPprC";
+const toreo = "https://drive.google.com/uc?export=download&id=1qTh56jJMDyp3s2WriV-6M9uYYu1DP5Xg"; // recortes
+const fiestaprivada = "https://drive.google.com/uc?export=download&id=1BHvzelYTfGkAlozpXHOm1ci4RITLR5ka";
+const ferialocal = "https://drive.google.com/uc?export=download&id=16mdWT0JDFhrzI_GFAhMd0u5lB5sVoL3C";
+
 
 import fotopatrimonio from './assets/Fotos/monasterio/monasterio.JPEG';
 import fototoreo from './assets/Fotos/domavaquera/doma.JPG';
@@ -39,6 +41,26 @@ import dron2 from './assets/DRON/dron2.jpg';
 import dron3 from './assets/DRON/IMG_9805.JPG';
 
 import logo from './assets/Logotipos/f3129c07-52f2-4c3d-bcde-269f178c0f06.png';
+
+// --- Google Drive helpers ---
+const isDriveUrl = (url = "") => /https?:\/\/drive\.google\.com\/.+/i.test(url);
+
+// Extrae el ID desde formatos:
+// - https://drive.google.com/file/d/ID/preview
+// - https://drive.google.com/uc?export=download&id=ID
+const extractDriveId = (url = "") => {
+  const byPath = url.match(/\/d\/([-\w]{25,})/);
+  if (byPath?.[1]) return byPath[1];
+  const byQuery = url.match(/[?&]id=([-\w]{25,})/);
+  return byQuery?.[1] || "";
+};
+
+// Transforma cualquier URL de Drive a /preview
+const toDrivePreview = (url = "") => {
+  const id = extractDriveId(url);
+  return id ? `https://drive.google.com/file/d/${id}/preview` : url;
+};
+
 // =============================================
 // Granadron — Landing Page (single-file React)
 // - TailwindCSS required
@@ -120,12 +142,9 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, onClick }) => (
 );
 
 
-// Carrusel de vídeo/foto genérico
-// Helpers
-// acepta ...mp4, ...mp4?algo, ...mp4#algo (y mayúsculas)
+// SOLO extensiones reales; Drive NO entra aquí
 const isVideo = (src = "") => /\.(mp4|webm|ogg|mov)(\?.*)?(#.*)?$/i.test(src);
 
-// Obtiene extensión real ignorando query/hash
 const guessMime = (src = "") => {
   const clean = src.split("?")[0].split("#")[0];
   const ext = (clean.split(".").pop() || "").toLowerCase();
@@ -133,11 +152,17 @@ const guessMime = (src = "") => {
   if (ext === "webm") return "video/webm";
   if (ext === "ogg") return "video/ogg";
   if (ext === "mov") return "video/quicktime";
-  return "video/mp4"; // fallback seguro
+  return "video/mp4";
 };
 
 
-const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000, heightClass = "h-[60vh]", withOverlay = true }) => {
+
+const MediaCarousel: React.FC<MediaCarouselProps> = ({
+  items,
+  intervalMs = 5000,
+  heightClass = "h-[60vh]",
+  withOverlay = true,
+}) => {
   const [index, setIndex] = useState(0);
   const length = items.length;
 
@@ -149,6 +174,38 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000,
   const prev = () => setIndex((i) => (i - 1 + length) % length);
   const next = () => setIndex((i) => (i + 1) % length);
 
+  // --- Helpers locales ---
+  const isDriveUrl = (url = "") => /https?:\/\/drive\.google\.com\/.+/i.test(url);
+
+  // extrae ID desde:
+  // - https://drive.google.com/file/d/ID/preview
+  // - https://drive.google.com/uc?export=download&id=ID
+  const extractDriveId = (url = "") => {
+    const byPath = url.match(/\/d\/([-\w]{25,})/);
+    if (byPath?.[1]) return byPath[1];
+    const byQuery = url.match(/[?&]id=([-\w]{25,})/);
+    return byQuery?.[1] || "";
+  };
+
+  const toDrivePreview = (url = "") => {
+    const id = extractDriveId(url);
+    // puedes añadir ?autoplay=1 si quieres intentar autoplay en desktop
+    return id ? `https://drive.google.com/file/d/${id}/preview` : url;
+  };
+
+  // SOLO considera vídeo si hay extensión real; Drive se maneja aparte
+  const isVideo = (src = "") => /\.(mp4|webm|ogg|mov)(\?.*)?(#.*)?$/i.test(src);
+
+  const guessMime = (src = "") => {
+    const clean = src.split("?")[0].split("#")[0];
+    const ext = (clean.split(".").pop() || "").toLowerCase();
+    if (ext === "mp4") return "video/mp4";
+    if (ext === "webm") return "video/webm";
+    if (ext === "ogg") return "video/ogg";
+    if (ext === "mov") return "video/quicktime";
+    return "video/mp4";
+  };
+
   return (
     <div className={`relative w-full overflow-hidden rounded-2xl shadow-2xl ${heightClass}`}>
       {items.map((item: MediaItem, i: number) => (
@@ -159,7 +216,19 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000,
           transition={{ duration: 0.6 }}
           className={`absolute inset-0 ${i === index ? "pointer-events-auto" : "pointer-events-none"}`}
         >
-          {isVideo(item.src) ? (
+          {isDriveUrl(item.src) ? (
+            // ▶️ Google Drive (iframe /preview)
+            <iframe
+              src={toDrivePreview(item.src)}
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+              loading="lazy"
+              className="h-full w-full rounded-2xl"
+              referrerPolicy="no-referrer"
+              title={item.title || item.label || `slide-${i}`}
+            />
+          ) : isVideo(item.src) ? (
+            // ▶️ Vídeo con archivo real (CDN/local)
             <video
               className="h-full w-full object-cover"
               autoPlay
@@ -167,23 +236,35 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000,
               loop
               playsInline
               preload="metadata"
+            // descomenta para depurar:
+            // onError={(e) => console.error("VIDEO ERROR", e.currentTarget.error, item.src)}
+            // onLoadedData={() => console.log("VIDEO LOADED", item.src)}
             >
               <source src={item.src} type={guessMime(item.src)} />
             </video>
           ) : (
-            <img src={item.src} alt={item.title || item.label || `slide-${i}`} className="h-full w-full object-cover" />
+            // ▶️ Imagen
+            <img
+              src={item.src}
+              alt={item.title || item.label || `slide-${i}`}
+              className="h-full w-full object-cover"
+            />
           )}
 
           {withOverlay && (item.title || item.description) && (
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
               {item.title && <h3 className="text-xl font-semibold text-white">{item.title}</h3>}
-              {item.description && <p className="mt-1 max-w-3xl text-sm text-white/80">{item.description}</p>}
+              {item.description && (
+                <p className="mt-1 max-w-3xl text-sm text-white/80">{item.description}</p>
+              )}
             </div>
           )}
 
           {item.label && (
             <div className="pointer-events-none absolute inset-0 grid place-items-center">
-              <div className="rounded-full bg-black/35 px-5 py-2 text-lg font-bold backdrop-blur-sm">{item.label}</div>
+              <div className="rounded-full bg-black/35 px-5 py-2 text-lg font-bold backdrop-blur-sm">
+                {item.label}
+              </div>
             </div>
           )}
         </motion.div>
@@ -191,19 +272,46 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000,
 
       <div className="pointer-events-none absolute inset-0">
         <div className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2">
-          <button onClick={prev} className="rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20" aria-label="Anterior">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-white"><path d="m15 18-6-6 6-6" /></svg>
+          <button
+            onClick={prev}
+            className="rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20"
+            aria-label="Anterior"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-5 w-5 text-white"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
           </button>
         </div>
         <div className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2">
-          <button onClick={next} className="rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20" aria-label="Siguiente">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-white"><path d="m9 18 6-6-6-6" /></svg>
+          <button
+            onClick={next}
+            className="rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20"
+            aria-label="Siguiente"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-5 w-5 text-white"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           </button>
         </div>
       </div>
     </div>
   );
 };
+
 
 
 export default function Granadron() {
@@ -218,7 +326,6 @@ export default function Granadron() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 md:px-6">
           <a href="/" className="flex items-center gap-3">
             <img src={logo} alt="Granadron" className="h-11 w-11 rounded" />
-            <span className="font-display text-lg font-bold tracking-wide">GRANADRON</span>
           </a>
 
           {/* Menú completo solo desde >= xl */}
