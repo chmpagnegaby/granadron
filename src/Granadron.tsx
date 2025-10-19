@@ -4,11 +4,11 @@ import { Menu, X, Phone, Mail, Send, ArrowRight, Instagram, Video as VideoIcon} 
 import firma from './assets/Logotipos/82f59599-8e4d-4493-b415-d6848d720c33.png';
 import hero from './assets/Fotos/Zafra/aea7ba88-e412-4cec-a41f-87afb8b65ac6.jpg';
 
-import ferialocal from './assets/Vi╠üdeos/Feria de zafra.MP4';
-import toreo from './assets/Vi╠üdeos/Recortes nin╠âo (Zafra).MP4';
-import fiestapueblo from './assets/Vi╠üdeos/Virgen de Tentudia de Monesterio.MP4';
-import cultura from './assets/Vi╠üdeos/Monesterio de Tentudia (RESUMEN).MP4';
-import fiestaprivada from './assets/Vi╠üdeos/Victoriano Contreras (Monesterio).MP4';
+import ferialocal from './assets/videos/zafra.MP4';
+import toreo from './assets/videos/recortes.MP4';
+import fiestapueblo from './assets/videos/preferia.MP4';
+import cultura from './assets/videos/zafraferia.MP4';
+import fiestaprivada from './assets/videos/victoriano.MP4';
 
 import fotopatrimonio from './assets/Fotos/Monasterio de Tentudia/0A229357-9D00-43A6-A2E2-7079B0B6A25B.JPEG';
 import fototoreo from './assets/Fotos/Concurso doma vaquera Monesterio/IMG_0716.JPG';
