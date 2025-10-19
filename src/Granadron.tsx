@@ -122,15 +122,20 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, onClick }) => (
 
 // Carrusel de vídeo/foto genérico
 // Helpers
-const isVideo = (src = "") => /\.(mp4|webm|ogg|mov)$/i.test(src);
+// acepta ...mp4, ...mp4?algo, ...mp4#algo (y mayúsculas)
+const isVideo = (src = "") => /\.(mp4|webm|ogg|mov)(\?.*)?(#.*)?$/i.test(src);
+
+// Obtiene extensión real ignorando query/hash
 const guessMime = (src = "") => {
-  const ext = (src.split(".").pop() || "").toLowerCase();
+  const clean = src.split("?")[0].split("#")[0];
+  const ext = (clean.split(".").pop() || "").toLowerCase();
   if (ext === "mp4") return "video/mp4";
   if (ext === "webm") return "video/webm";
   if (ext === "ogg") return "video/ogg";
-  if (ext === "mov") return "video/quicktime"; // cuidado: muchos .mov no cargan en web
-  return "";
+  if (ext === "mov") return "video/quicktime";
+  return "video/mp4"; // fallback seguro
 };
+
 
 const MediaCarousel: React.FC<MediaCarouselProps> = ({ items, intervalMs = 5000, heightClass = "h-[60vh]", withOverlay = true }) => {
   const [index, setIndex] = useState(0);
