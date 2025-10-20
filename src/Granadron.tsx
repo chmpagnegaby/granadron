@@ -17,6 +17,8 @@ type MediaCarouselProps = {
   withOverlay?: boolean;
 };
 
+import { Youtube } from "lucide-react";
+
 import { motion } from "framer-motion";
 import { Menu, X, Phone, Mail, Send, ArrowRight, Instagram, Video as VideoIcon } from "lucide-react";
 import firma from './assets/Logotipos/82f59599-8e4d-4493-b415-d6848d720c33.png';
@@ -110,6 +112,7 @@ const EXPERIENCE_SLIDES: MediaItem[] = [
 const RRSS = [
   { label: "Instagram", href: "https://instagram.com/granadron", handle: "@granadron", icon: <Instagram className="h-6 w-6" aria-hidden /> },
   { label: "TikTok", href: "https://tiktok.com/_granadron_", handle: "_granadron_", icon: <VideoIcon className="h-6 w-6" aria-hidden /> },
+  { label: "YouTube", href: "https://www.youtube.com/@granadron", handle: "@Granadron", icon: <Youtube className="h-6 w-6" aria-hidden /> },
 ];
 
 const CONTACT = {
