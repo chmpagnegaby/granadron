@@ -139,7 +139,6 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   intervalMs = 5000,
   // Altura cómoda: móvil/tablet/desktop
   heightClass = "h-[52vh] sm:h-[60vh] md:h-[68vh]",
-  withOverlay = true, // ignorado: el texto va debajo
 }) => {
   const [index, setIndex] = useState(0);
   const length = items.length;
