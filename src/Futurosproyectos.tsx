@@ -170,7 +170,7 @@ export default function FuturosProyectos() {
             </p>
 
             {/* 🎥 PLAYER GOOGLE DRIVE */}
-            <div className="relative aspect-video w-full overflow-hidden rounded-2xl mt-4">
+            <div className="relative w-full overflow-hidden rounded-2xl" style={{ height: "75vh" }}>
               <iframe
                 src={TEASER_SRC}
                 allow="autoplay; encrypted-media"

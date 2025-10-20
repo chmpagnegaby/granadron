@@ -137,8 +137,9 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, onClick }) => (
 const MediaCarousel: React.FC<MediaCarouselProps> = ({
   items,
   intervalMs = 5000,
-  heightClass = "h-[60vh]",
-  withOverlay = true,
+  // Altura cómoda: móvil/tablet/desktop
+  heightClass = "h-[52vh] sm:h-[60vh] md:h-[68vh]",
+  withOverlay = true, // ignorado: el texto va debajo
 }) => {
   const [index, setIndex] = useState(0);
   const length = items.length;
@@ -151,32 +152,22 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   const prev = () => setIndex((i) => (i - 1 + length) % length);
   const next = () => setIndex((i) => (i + 1) % length);
 
-  // --- Helpers locales ---
+  // === Helpers Drive ===
   const isDriveUrl = (url = "") => /https?:\/\/drive\.google\.com\/.+/i.test(url);
-
-  // extrae ID desde:
-  // - https://drive.google.com/file/d/ID/preview
-  // - https://drive.google.com/uc?export=download&id=ID
   const extractDriveId = (url = "") => {
     const byPath = url.match(/\/d\/([-\w]{25,})/);
     if (byPath?.[1]) return byPath[1];
     const byQuery = url.match(/[?&]id=([-\w]{25,})/);
     return byQuery?.[1] || "";
   };
-
   const toDrivePreview = (url = "") => {
     const id = extractDriveId(url);
-    // puedes añadir ?autoplay=1 si quieres intentar autoplay en desktop
     return id ? `https://drive.google.com/file/d/${id}/preview` : url;
   };
 
-  // SOLO considera vídeo si hay extensión real; Drive se maneja aparte
-  const isVideo = (src = "") => /\.(mp4|webm|ogg|mov)(\?.*)?(#.*)?$/i.test(src);
-
+  const isVideoFile = (src = "") => /\.(mp4|webm|ogg|mov)(\?.*)?(#.*)?$/i.test(src);
   const guessMime = (src = "") => {
-    const clean = src.split("?")[0].split("#")[0];
-    const ext = (clean.split(".").pop() || "").toLowerCase();
-    if (ext === "mp4") return "video/mp4";
+    const ext = (src.split("?")[0].split(".").pop() || "").toLowerCase();
     if (ext === "webm") return "video/webm";
     if (ext === "ogg") return "video/ogg";
     if (ext === "mov") return "video/quicktime";
@@ -184,110 +175,100 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   };
 
   return (
-    <div className={`relative w-full overflow-hidden rounded-2xl shadow-2xl ${heightClass}`}>
-      {items.map((item: MediaItem, i: number) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: i === index ? 1 : 0 }}
-          transition={{ duration: 0.6 }}
-          className={`absolute inset-0 ${i === index ? "pointer-events-auto" : "pointer-events-none"}`}
-        >
-          {isDriveUrl(item.src) ? (
-            // ▶️ Google Drive (iframe /preview)
-            <iframe
-              src={toDrivePreview(item.src)}
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-              loading="lazy"
-              className="h-full w-full rounded-2xl"
-              referrerPolicy="no-referrer"
-              title={item.title || item.label || `slide-${i}`}
-            />
-          ) : isVideo(item.src) ? (
-            // ▶️ Vídeo con archivo real (CDN/local)
-            <video
-              className="h-full w-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            // descomenta para depurar:
-            // onError={(e) => console.error("VIDEO ERROR", e.currentTarget.error, item.src)}
-            // onLoadedData={() => console.log("VIDEO LOADED", item.src)}
+    <div className="w-full text-center">
+      {/* === Visor === */}
+      <div className={`relative overflow-hidden rounded-2xl bg-black shadow-2xl ${heightClass}`}>
+        {items.map((item, i) => {
+          const active = i === index;
+          const isDrive = isDriveUrl(item.src);
+
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: active ? 1 : 0 }}
+              transition={{ duration: 0.5 }}
+              className={`absolute inset-0 ${active ? "pointer-events-auto" : "pointer-events-none"}`}
             >
-              <source src={item.src} type={guessMime(item.src)} />
-            </video>
-          ) : (
-            // ▶️ Imagen
-            <img
-              src={item.src}
-              alt={item.title || item.label || `slide-${i}`}
-              className="h-full w-full object-cover"
-            />
-          )}
-
-          {withOverlay && (item.title || item.description) && (
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
-              {item.title && <h3 className="text-xl font-semibold text-white">{item.title}</h3>}
-              {item.description && (
-                <p className="mt-1 max-w-3xl text-sm text-white/80">{item.description}</p>
+              {isDrive ? (
+                // ▶️ Google Drive (iframe /preview) — centrado dentro del contenedor
+                <iframe
+                  src={toDrivePreview(item.src)}
+                  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  title={item.title || item.label || `slide-${i}`}
+                  className="h-full w-full"
+                />
+              ) : isVideoFile(item.src) ? (
+                // ▶️ Vídeo propio/CDN — centrado, sin recortes
+                <video
+                  className="h-full w-full object-contain"
+                  controls
+                  playsInline
+                  preload="metadata"
+                >
+                  <source src={item.src} type={guessMime(item.src)} />
+                </video>
+              ) : (
+                // ▶️ Imagen (fallback)
+                <img
+                  src={item.src}
+                  alt={item.title || `slide-${i}`}
+                  className="h-full w-full object-contain"
+                />
               )}
-            </div>
-          )}
+            </motion.div>
+          );
+        })}
 
-          {item.label && (
-            <div className="pointer-events-none absolute inset-0 grid place-items-center">
-              <div className="rounded-full bg-black/35 px-5 py-2 text-lg font-bold backdrop-blur-sm">
-                {item.label}
-              </div>
-            </div>
-          )}
-        </motion.div>
-      ))}
-
-      <div className="pointer-events-none absolute inset-0">
-        <div className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2">
+        {/* Flechas centradas lateralmente (no pisan los controles inferiores) */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-2 sm:px-4">
           <button
             onClick={prev}
-            className="rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20"
+            className="pointer-events-auto rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20"
             aria-label="Anterior"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="h-5 w-5 text-white"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2"
+              className="h-5 w-5 text-white">
               <path d="m15 18-6-6 6-6" />
             </svg>
           </button>
-        </div>
-        <div className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2">
           <button
             onClick={next}
-            className="rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20"
+            className="pointer-events-auto rounded-full bg-white/10 p-3 backdrop-blur hover:bg-white/20"
             aria-label="Siguiente"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="h-5 w-5 text-white"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2"
+              className="h-5 w-5 text-white">
               <path d="m9 18 6-6-6-6" />
             </svg>
           </button>
         </div>
       </div>
+
+      {/* === Texto centrado debajo === */}
+      {items[index] && (
+        <div className="mt-5 px-3 sm:px-6">
+          {items[index].title && (
+            <h3 className="text-lg sm:text-xl font-display font-semibold text-white">
+              {items[index].title}
+            </h3>
+          )}
+          {items[index].description && (
+            <p className="mt-2 text-sm sm:text-base text-neutral-300 leading-relaxed max-w-3xl mx-auto">
+              {items[index].description}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
+
 
 
 
@@ -431,7 +412,12 @@ export default function Granadron() {
           </div>
           <div>
             {/* Carrusel a la derecha — intervalo 5 MIN */}
-            <MediaCarousel items={PROJECT_VIDEOS} intervalMs={300000} heightClass="h-[72vh]" />
+            <MediaCarousel
+              items={PROJECT_VIDEOS}
+              intervalMs={300000}
+              heightClass="h-[60vh] sm:h-[56vh] md:h-[64vh]" // más compacto
+            />
+
           </div>
         </div>
       </section>

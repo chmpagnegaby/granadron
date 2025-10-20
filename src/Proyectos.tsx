@@ -291,16 +291,17 @@ const ProjectCard = ({ p }: { p: ProjectItem }) => {
                     <VideoPlaceholder />
                 ) : isGDrive ? (
                     // ▶️ Player de Google Drive
-                    <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
+                    <div className="relative w-full overflow-hidden rounded-2xl" style={{ height: "75vh" }}>
                         <iframe
                             src={`https://drive.google.com/file/d/${driveId}/preview`}
                             allow="autoplay; encrypted-media"
                             allowFullScreen
                             loading="lazy"
-                            className="h-full w-full rounded-2xl"
+                            className="h-full w-full rounded-2xl object-contain"
                             referrerPolicy="no-referrer"
                         />
                     </div>
+
                 ) : (
                     // ▶️ Vídeo normal (archivos propios / CDN)
                     <video
